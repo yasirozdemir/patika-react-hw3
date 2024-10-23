@@ -10,7 +10,7 @@ function App() {
           <Route
             path="/"
             element={
-              <WeatherProvider current={true}>
+              <WeatherProvider>
                 <City />
               </WeatherProvider>
             }
@@ -18,7 +18,7 @@ function App() {
           <Route
             path="/:city_name"
             element={
-              <WeatherProvider current={false}>
+              <WeatherProvider>
                 <City />
               </WeatherProvider>
             }

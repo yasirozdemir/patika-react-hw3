@@ -1,10 +1,11 @@
 import axios from "axios";
 import { createContext, useContext, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 const WeatherContext = createContext();
 
-const WeatherProvider = ({ children, current }) => {
+const WeatherProvider = ({ children }) => {
+  const navigate = useNavigate();
   const [value, setValue] = useState({});
   const [url, setUrl] = useState("");
   const [loading, setLoading] = useState(true);
@@ -15,7 +16,7 @@ const WeatherProvider = ({ children, current }) => {
 
   useEffect(() => {
     const fetchUrl = () => {
-      if (!current && city !== "") {
+      if (city && city !== "") {
         const url = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}&units=metric`;
         setUrl(url);
       } else {
@@ -34,35 +35,54 @@ const WeatherProvider = ({ children, current }) => {
       }
     };
     fetchUrl();
-  }, [current, city]);
+  }, [city]);
+
+  const getWeatherData = async () => {
+    if (!url) return;
+    setLoading(true);
+    try {
+      const { data } = await axios.get(url);
+      const updatedValue = {
+        cityDetails: data.city,
+        dayWeatherData: data.list.slice(0, 5),
+        weekWeatherData: data.list.filter((_, i) => i % 8 === 0),
+      };
+
+      setValue(updatedValue);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const getWeatherData = async () => {
-      if (!url) return;
-      setLoading(true);
-      try {
-        const { data } = await axios.get(url);
-        const updatedValue = {
-          cityDetails: data.city,
-          dayWeatherData: data.list.slice(0, 5),
-          weekWeatherData: data.list.filter((_, i) => i % 8 === 0),
-        };
-
-        setValue(updatedValue);
-      } catch (err) {
-        setError(err.message);
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     getWeatherData();
   }, [url]);
 
+  const handleRefresh = () => {
+    navigate("/");
+    window.location.reload();
+  };
+
   return (
     <WeatherContext.Provider value={value}>
-      {loading ? <p>Loading...</p> : error ? <p>{error}</p> : children}
+      {loading ? (
+        <p>Loading...</p>
+      ) : error ? (
+        <div className="flex flex-col">
+          <p>{error}</p>
+          <button
+            id="refresh"
+            onClick={handleRefresh}
+            className="bg-white border border-gray-800 px-2 rounded-md mt-2"
+          >
+            Refresh the page
+          </button>
+        </div>
+      ) : (
+        children
+      )}
     </WeatherContext.Provider>
   );
 };

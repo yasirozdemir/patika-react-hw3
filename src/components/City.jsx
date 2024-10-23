@@ -1,5 +1,6 @@
 import { useWeather } from "../context/WeatherContext";
 import DailyForecast from "./DailyForecast";
+import SearchBar from "./SearchBar";
 import WeeklyForecast from "./WeeklyForecast";
 
 const City = () => {
@@ -18,6 +19,8 @@ const City = () => {
       <DailyForecast />
 
       <WeeklyForecast />
+
+      <SearchBar />
     </section>
   );
 };
