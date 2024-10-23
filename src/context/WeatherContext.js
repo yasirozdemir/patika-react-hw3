@@ -6,35 +6,20 @@ const WeatherContext = createContext();
 
 const WeatherProvider = ({ children }) => {
   const navigate = useNavigate();
-  const [value, setValue] = useState({});
   const [url, setUrl] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [value, setValue] = useState({ setUrl });
   const { city_name: city } = useParams();
 
   const apiKey = process.env.REACT_APP_OPEN_WEATHER_API_KEY;
+  const defaultUrl = `https://api.openweathermap.org/data/2.5/forecast?q=istanbul&appid=${apiKey}&units=metric`;
 
   useEffect(() => {
-    const fetchUrl = () => {
-      if (city && city !== "") {
-        const url = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}&units=metric`;
-        setUrl(url);
-      } else {
-        navigator.geolocation.getCurrentPosition(
-          ({ coords: { latitude: lat, longitude: lon } }) => {
-            const url = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`;
-            setUrl(url);
-          },
-          (err) => {
-            console.error("Geolocation error: ", err);
-            const url = `https://api.openweathermap.org/data/2.5/forecast?q=istanbul&appid=${apiKey}&units=metric`;
-            setUrl(url);
-            setLoading(false);
-          }
-        );
-      }
-    };
-    fetchUrl();
+    if (city && city !== "") {
+      const url = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}&units=metric`;
+      setUrl(url);
+    } else setUrl(defaultUrl);
   }, [city]);
 
   const getWeatherData = async () => {
@@ -54,10 +39,7 @@ const WeatherProvider = ({ children }) => {
         return acc;
       }, []);
 
-      const updatedValue = {
-        cityDetails: data.city,
-        weatherArr: _,
-      };
+      const updatedValue = { ...value, cityDetails: data.city, weatherArr: _ };
 
       setValue(updatedValue);
     } catch (err) {
@@ -77,7 +59,7 @@ const WeatherProvider = ({ children }) => {
   };
 
   return (
-    <WeatherContext.Provider value={value}>
+    <WeatherContext.Provider value={{ ...value, getWeatherData }}>
       {loading ? (
         <p>Loading...</p>
       ) : error ? (
@@ -86,7 +68,7 @@ const WeatherProvider = ({ children }) => {
           <button
             id="refresh"
             onClick={handleRefresh}
-            className="bg-white border border-gray-800 px-2 rounded-md mt-2"
+            className="rounded-md border bg-white border-gray-200 p-2 font-thin outline-gray-800 transition-all duration-300 hover:bg-sky-50 mt-2"
           >
             Refresh the page
           </button>
