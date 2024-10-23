@@ -4,7 +4,7 @@ import { WeatherProvider } from "./context/WeatherContext";
 
 function App() {
   return (
-    <main className="h-screen flex justify-center items-center">
+    <main className="min-h-screen flex justify-center items-center">
       <BrowserRouter>
         <Routes>
           <Route

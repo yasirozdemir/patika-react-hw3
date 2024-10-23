@@ -15,8 +15,11 @@ const SearchBar = () => {
   };
 
   return (
-    <form className="flex flex-col" onSubmit={handleSearch}>
-      <label htmlFor="search" className="text-center text-gray-800 my-2">
+    <form className="flex flex-col my-8" onSubmit={handleSearch}>
+      <label
+        htmlFor="search"
+        className="text-center text-gray-800 mb-2 text-lg sm:text-xl"
+      >
         Search for a city...
       </label>
       <input
@@ -27,7 +30,7 @@ const SearchBar = () => {
         onChange={(e) => {
           setValue(e.target.value);
         }}
-        className="w-full text-xl rounded-md border border-gray-200 pl-2 py-1 font-thin outline-gray-800"
+        className="w-full text-lg sm:text-xl rounded-md border border-gray-200 pl-2 py-1 font-thin outline-gray-800"
       />
     </form>
   );

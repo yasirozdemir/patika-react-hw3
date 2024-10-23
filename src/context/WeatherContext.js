@@ -42,10 +42,21 @@ const WeatherProvider = ({ children }) => {
     setLoading(true);
     try {
       const { data } = await axios.get(url);
+
+      const _ = data.list.reduce((acc, el) => {
+        const dt = el.dt_txt.slice(0, 10);
+
+        const existingGroup = acc.find((group) => group.date === dt);
+
+        if (existingGroup) existingGroup.data.push(el);
+        else acc.push({ date: dt, data: [el] });
+
+        return acc;
+      }, []);
+
       const updatedValue = {
         cityDetails: data.city,
-        dayWeatherData: data.list.slice(0, 5),
-        weekWeatherData: data.list.filter((_, i) => i % 8 === 0),
+        weatherArr: _,
       };
 
       setValue(updatedValue);
