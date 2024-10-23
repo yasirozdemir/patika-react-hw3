@@ -1,26 +1,38 @@
 import { useWeather } from "../context/WeatherContext";
-import { unixToDate } from "../lib/Functions";
+import { formatDate } from "../lib/Functions";
 
 const DailyForecast = () => {
   const { dayWeatherData } = useWeather();
-  const _ClassList = "font-thin text-lg";
 
   return (
-    <>
-      {dayWeatherData?.length !== 0 &&
-        dayWeatherData.map((el) => (
-          <li key={el.dt} className={_ClassList}>
-            <p>{unixToDate(el.dt, "h aa")}</p>
-            <p>{(Math.round(el.main.temp * 100) / 100).toFixed(1)}°</p>
-            <img
-              src={`http://openweathermap.org/img/wn/${el.weather[0].icon}@2x.png`}
-              alt={el.weather[0].main}
-            />
-            <br />
-            <br />
-          </li>
-        ))}
-    </>
+    <div className="bg-white rounded-md mx-auto border border-gray-200">
+      <p className="text-xl text-center border-b border-b-gray-200 py-2 font-serif">
+        {new Date().toLocaleDateString(undefined, {
+          weekday: "long",
+        })}
+      </p>
+      <ul className="grid grid-cols-5 py-2">
+        {dayWeatherData?.length !== 0 &&
+          dayWeatherData.map((el) => (
+            <li
+              key={el.dt}
+              className="flex flex-col content-center items-center"
+            >
+              <p className="">{formatDate(el.dt, "h aa")}</p>
+
+              <img
+                className=""
+                src={`http://openweathermap.org/img/wn/${el.weather[0].icon}@2x.png`}
+                alt={el.weather[0].main}
+              />
+
+              <p className="">
+                {(Math.round(el.main.temp * 100) / 100).toFixed(0)}°
+              </p>
+            </li>
+          ))}
+      </ul>
+    </div>
   );
 };
 
