@@ -12,22 +12,20 @@ const WeatherProvider = ({ children }) => {
   const [error, setError] = useState(false);
   const { city_name: city } = useParams();
 
-  const apiKey = process.env.REACT_APP_OPEN_WEATHER_API_KEY;
-
   useEffect(() => {
     const fetchUrl = () => {
       if (city && city !== "") {
-        const url = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}&units=metric`;
+        const url = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${process.env.REACT_APP_OPEN_WEATHER_API_KEY}&units=metric`;
         setUrl(url);
       } else {
         navigator.geolocation.getCurrentPosition(
           ({ coords: { latitude: lat, longitude: lon } }) => {
-            const url = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`;
+            const url = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${process.env.REACT_APP_OPEN_WEATHER_API_KEY}&units=metric`;
             setUrl(url);
           },
           (err) => {
             console.error("Geolocation error: ", err);
-            const url = `https://api.openweathermap.org/data/2.5/forecast?q=istanbul&appid=${apiKey}&units=metric`;
+            const url = `https://api.openweathermap.org/data/2.5/forecast?q=istanbul&appid=${process.env.REACT_APP_OPEN_WEATHER_API_KEY}&units=metric`;
             setUrl(url);
             setLoading(false);
           }
