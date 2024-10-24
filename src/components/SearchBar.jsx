@@ -1,14 +1,13 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { useWeather } from "../context/WeatherContext";
+import { useNavigate, useParams } from "react-router-dom";
 
 const SearchBar = () => {
-  const { setUrl, getWeatherData } = useWeather();
   const navigate = useNavigate();
+  const { city_name: city } = useParams();
   const [value, setValue] = useState("");
 
   const handleSearch = (e) => {
-    if (value !== " ") {
+    if (value !== "") {
       const editedInput = "/" + value.replace(" ", "%20");
       navigate(editedInput, { replace: true });
       e.preventDefault();
@@ -18,14 +17,7 @@ const SearchBar = () => {
   };
 
   const setCurrentLoc = () => {
-    navigator.geolocation.getCurrentPosition(
-      ({ coords: { latitude: lat, longitude: lon } }) => {
-        const url = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${process.env.REACT_APP_OPEN_WEATHER_API_KEY}&units=metric`;
-        setUrl(url);
-      }
-    );
-    navigate("/", { replace: true });
-    getWeatherData();
+    navigate("/current", { replace: true });
   };
 
   const _ClassList =
@@ -49,9 +41,11 @@ const SearchBar = () => {
         />
       </form>
 
-      <button id="current" className={_ClassList} onClick={setCurrentLoc}>
-        Show weather forecast for my current location
-      </button>
+      {city !== "current" && (
+        <button id="current" className={_ClassList} onClick={setCurrentLoc}>
+          Show weather forecast for my current location
+        </button>
+      )}
     </div>
   );
 };

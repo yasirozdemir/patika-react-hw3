@@ -9,16 +9,28 @@ const WeatherProvider = ({ children }) => {
   const [url, setUrl] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
-  const [value, setValue] = useState({ setUrl });
   const { city_name: city } = useParams();
+  const [value, setValue] = useState();
 
   const apiKey = process.env.REACT_APP_OPEN_WEATHER_API_KEY;
   const defaultUrl = `https://api.openweathermap.org/data/2.5/forecast?q=istanbul&appid=${apiKey}&units=metric`;
 
   useEffect(() => {
     if (city && city !== "") {
-      const url = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}&units=metric`;
-      setUrl(url);
+      if (city !== "current") {
+        const url = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}&units=metric`;
+        setUrl(url);
+      } else {
+        navigator.geolocation.getCurrentPosition(
+          ({ coords: { latitude: lat, longitude: lon } }) => {
+            const url = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${process.env.REACT_APP_OPEN_WEATHER_API_KEY}&units=metric`;
+            setUrl(url);
+          },
+          (err) => {
+            setError(err.message);
+          }
+        );
+      }
     } else setUrl(defaultUrl);
   }, [city]);
 
@@ -59,7 +71,7 @@ const WeatherProvider = ({ children }) => {
   };
 
   return (
-    <WeatherContext.Provider value={{ ...value, getWeatherData }}>
+    <WeatherContext.Provider value={value}>
       {loading ? (
         <p>Loading...</p>
       ) : error ? (

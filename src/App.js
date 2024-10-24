@@ -8,15 +8,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route
-            path="/"
-            element={
-              <WeatherProvider>
-                <City />
-              </WeatherProvider>
-            }
-          />
-          <Route
-            path="/:city_name"
+            path="/:city_name?"
             element={
               <WeatherProvider>
                 <City />
